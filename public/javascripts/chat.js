@@ -11,21 +11,19 @@ socket.on('name_set', function(data){
 	});
 
 	$('#send').click(function(){ 
-		/*var data = { 
+		var data = { 
 			message: $('#message').val(), 
 			type:'userMessage' 
-		}; */
-		data.message = $('#message').val();
-		data.type = 'userMessage';
+		}; 
 		socket.send(JSON.stringify(data)); 
 		$('#message').val(''); 
 	}); 
 
 	socket.on('message', function (data) { 
 		data = JSON.parse(data); 		
-		if(data.name){
+		if(data.username){
 			$('#messages').append('<div class="'+data.type+
-			'"><span class="name">' + data.name + ":</span> " + data.message + '</div>');
+			'"><span class="name">' + data.username + ":</span> " + data.message + '</div>');
 		}
 		else{	
 			$('#messages').append('<div class="'+data.type+'">' +data.message + '</div>');

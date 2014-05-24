@@ -17,9 +17,12 @@ var io = require('socket.io');
 			socket.on('message', function(message){ 
 				message= JSON.parse(message); 
 					if(message.type == "userMessage"){ 
-						socket.broadcast.send(JSON.stringify(message));
-						message.type = "myMessage"; 
-						socket.send(JSON.stringify(message)); 
+						socket.get('nickname', function(err, nickname){
+							message.username = nickname;
+							socket.broadcast.send(JSON.stringify(message));
+							message.type = "myMessage"; 
+							socket.send(JSON.stringify(message)); 
+						});
 					} 
 			});
 
