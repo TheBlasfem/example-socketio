@@ -1,18 +1,44 @@
 var socket = io.connect('http://localhost:3000');
 
-socket.on('message', function (data) { 
-	data = JSON.parse(data); 
-	$('#messages').append('<div class="'+data.type+'">' + data.message + 
-	'</div>'); 
-}); 
+socket.on('name_set', function(data){
+	$('#nameform').hide();
+	$('#messages').append('<div class="systemMessage">' + 
+	'Hello '+data.name+'</div>');
 
-$(function(){ 
+	socket.on("user_entered", function(user){
+		$('#messages').append('<div class="systemMessage">' + 
+		user.name + ' has joined the room.' + '</div>');
+	});
+
 	$('#send').click(function(){ 
-		var data = { 
+		/*var data = { 
 			message: $('#message').val(), 
 			type:'userMessage' 
-		}; 
+		}; */
+		data.message = $('#message').val();
+		data.type = 'userMessage';
 		socket.send(JSON.stringify(data)); 
 		$('#message').val(''); 
 	}); 
+
+	socket.on('message', function (data) { 
+		data = JSON.parse(data); 		
+		if(data.name){
+			$('#messages').append('<div class="'+data.type+
+			'"><span class="name">' + data.name + ":</span> " + data.message + '</div>');
+		}
+		else{	
+			$('#messages').append('<div class="'+data.type+'">' +data.message + '</div>');
+		}
+	}); 
+
+});
+
+$(function(){ 
+	
+	$('#setname').click(function(){
+		socket.emit("set_name", {name: $('#nickname').val()});
+	});
+
+	
 });
